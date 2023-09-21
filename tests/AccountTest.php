@@ -2,17 +2,24 @@
 
 use PHPUnit\Framework\TestCase;
 
+require_once (__DIR__ . '/../TimeServiceInterface.php');
+require_once (__DIR__ . '/../TransactionRepository.php');
+require_once (__DIR__ . '/../AccountService.php');
+require_once (__DIR__ . '/../Database.php');
+
 final class AccountTest extends TestCase
 {
     function test_account_deposit(): void
     {
-        $timeService = Mockery::mock(TimeServiceInterface);
+        $timeService = Mockery::mock('TimeServiceInterface');
 
         $timeService->shouldReceive('now')->andReturn('10/04/2014');
 
-        $accountRepository = new AccountRepository($timeService);
+        $database = new Database($timeService);
 
-        $account = new Account($accountRepository);
+        $transactionRepository = new TransactionRepository($database);
+
+        $account = new AccountService($transactionRepository);
 
         $account->deposit(500);
 
